@@ -2,339 +2,191 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HOLLO AI - By Nur Andika</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOLLO AI - Nur Andika</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
         :root {
-            --primary: #8B5CF6;
-            --primary-light: #A855F7;
-            --primary-dark: #7C3AED;
-            --primary-glow: rgba(139, 92, 246, 0.3);
-            --secondary: #C4B5FD;
-            --accent: #F59E0B;
-            --background: #0F0F23;
-            --surface: #1A1A2E;
-            --surface-light: #252542;
-            --text-primary: #FFFFFF;
-            --text-secondary: #A0A0C0;
-            --border: #2D2D4D;
-            --success: #10B981;
-            --error: #EF4444;
-            --warning: #F59E0B;
+            --primary: #7C3AED;
+            --primary-light: #8B5CF6;
+            --primary-dark: #6D28D9;
+            --background: #F8FAFC;
+            --surface: #FFFFFF;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --border: #E5E7EB;
+            --shadow: rgba(0, 0, 0, 0.05);
         }
 
         body {
             background: var(--background);
             color: var(--text-primary);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            min-height: 100vh;
             line-height: 1.6;
-            overflow-x: hidden;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            min-height: 100vh;
         }
 
-        /* Mobile First Design */
         .container {
             max-width: 100%;
             margin: 0 auto;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            padding: 20px;
         }
 
-        /* Header Styles - Mobile Optimized */
+        /* Header */
         header {
-            background: linear-gradient(135deg, var(--surface), var(--surface-light));
-            padding: 20px 16px;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            max-width: 500px;
-            margin: 0 auto;
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 30px;
         }
 
         .logo {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            margin: 0 auto 15px;
             color: white;
-            box-shadow: 0 8px 25px var(--primary-glow);
-            flex-shrink: 0;
-        }
-
-        .header-text {
-            flex: 1;
+            font-size: 1.5rem;
         }
 
         h1 {
-            font-size: 1.4rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 2px;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-weight: 600;
         }
 
         .subtitle {
-            font-size: 0.85rem;
             color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 1rem;
         }
 
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
+        .creator {
+            color: var(--primary);
+            font-weight: 500;
+            margin-top: 10px;
         }
 
-        /* Main Chat Area */
+        /* Main Content */
         .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            max-width: 500px;
+            max-width: 800px;
             margin: 0 auto;
-            width: 100%;
-            padding: 0 16px;
+            background: var(--surface);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
         }
 
         .chat-container {
-            flex: 1;
+            height: 400px;
             overflow-y: auto;
-            padding: 20px 0;
-            scroll-behavior: smooth;
-        }
-
-        .chat-container::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .chat-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .chat-container::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
+            padding: 20px;
+            background: var(--background);
         }
 
         .message {
-            margin-bottom: 20px;
-            padding: 16px;
-            border-radius: 18px;
-            max-width: 85%;
-            position: relative;
-            animation: messageSlide 0.3s ease-out;
-            line-height: 1.5;
-            word-wrap: break-word;
-        }
-
-        @keyframes messageSlide {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 80%;
+            font-size: 0.95rem;
         }
 
         .user-message {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            background: var(--primary);
             color: white;
             margin-left: auto;
-            border-bottom-right-radius: 8px;
-            box-shadow: 0 4px 20px var(--primary-glow);
         }
 
         .ai-message {
             background: var(--surface);
             border: 1px solid var(--border);
             margin-right: auto;
-            border-bottom-left-radius: 8px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
         }
 
         .message-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
             font-size: 0.8rem;
             font-weight: 600;
-            gap: 6px;
+            margin-bottom: 5px;
+            opacity: 0.8;
         }
 
-        .user-message .message-header {
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .ai-message .message-header {
-            color: var(--primary);
-        }
-
-        /* Input Area - Mobile Optimized */
+        /* Input Area */
         .input-section {
-            padding: 16px;
-            background: var(--surface);
+            padding: 20px;
             border-top: 1px solid var(--border);
-            position: sticky;
-            bottom: 0;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: var(--surface);
         }
 
         .input-wrapper {
             display: flex;
             gap: 10px;
-            align-items: flex-end;
-            background: var(--surface-light);
-            border-radius: 20px;
-            padding: 8px;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .input-wrapper:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px var(--primary-glow);
+            align-items: center;
         }
 
         input {
             flex: 1;
             padding: 12px 16px;
-            border: none;
-            background: transparent;
-            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             font-size: 1rem;
             outline: none;
-            min-height: 44px;
-            border-radius: 16px;
+            transition: border-color 0.3s;
         }
 
-        input::placeholder {
-            color: var(--text-secondary);
+        input:focus {
+            border-color: var(--primary);
         }
 
-        .send-btn {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            border: none;
-            border-radius: 14px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            box-shadow: 0 4px 15px var(--primary-glow);
-        }
-
-        .send-btn:active {
-            transform: scale(0.95);
-        }
-
-        .send-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Quick Actions */
-        .quick-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            scrollbar-width: none;
-        }
-
-        .quick-actions::-webkit-scrollbar {
-            display: none;
-        }
-
-        .quick-action {
-            padding: 10px 16px;
-            background: var(--surface-light);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .quick-action:active {
+        button {
+            padding: 12px 24px;
             background: var(--primary);
             color: white;
-            transform: scale(0.95);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
         }
 
-        /* Loading Animation */
+        button:hover {
+            background: var(--primary-dark);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Loading */
         .loading {
             display: none;
-            margin: 20px 0;
-        }
-
-        .typing-indicator {
-            display: inline-flex;
-            align-items: center;
-            background: var(--surface);
-            padding: 16px 20px;
-            border-radius: 18px;
-            border-bottom-left-radius: 8px;
+            text-align: center;
+            padding: 10px;
             color: var(--text-secondary);
-            border: 1px solid var(--border);
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
-            max-width: 85%;
         }
 
         .typing-dots {
-            display: flex;
+            display: inline-flex;
             gap: 4px;
             margin-left: 10px;
         }
 
         .typing-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+            width: 6px;
+            height: 6px;
             background: var(--primary);
+            border-radius: 50%;
             animation: typing 1.4s infinite ease-in-out;
         }
 
@@ -346,289 +198,125 @@
             40% { transform: scale(1); opacity: 1; }
         }
 
-        /* Status Messages */
-        .status-message {
+        /* Status */
+        .status {
             text-align: center;
-            margin: 15px 0;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 0.9rem;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
             display: none;
         }
 
         .error {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--error);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: #FEF2F2;
+            color: #DC2626;
+            border: 1px solid #FECACA;
         }
 
         .success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: #F0FDF4;
+            color: #16A34A;
+            border: 1px solid #BBF7D0;
         }
 
-        /* Bottom Navigation */
-        .bottom-nav {
-            display: flex;
-            background: var(--surface);
-            border-top: 1px solid var(--border);
-            padding: 12px 16px;
-            position: sticky;
-            bottom: 0;
-        }
-
-        .nav-item {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px;
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
             color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.75rem;
-            transition: all 0.3s ease;
-            border-radius: 10px;
+            font-size: 0.9rem;
         }
 
-        .nav-item:active {
-            color: var(--primary);
-            background: var(--primary-glow);
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        .nav-icon {
-            font-size: 1.2rem;
-        }
-
-        /* Welcome Screen */
-        .welcome-screen {
-            text-align: center;
-            padding: 40px 20px;
-            display: none;
-        }
-
-        .welcome-icon {
-            font-size: 4rem;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 30px;
-        }
-
-        .feature-card {
-            background: var(--surface);
-            padding: 20px 12px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            text-align: center;
-        }
-
-        .feature-icon {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        /* Animations */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .float {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        /* Swipe Indicators */
-        .swipe-hint {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            padding: 10px;
-            opacity: 0.7;
-        }
-
-        /* Mobile Specific Enhancements */
-        @media (max-width: 380px) {
-            .header-content {
-                gap: 10px;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
             }
             
-            .logo {
-                width: 44px;
-                height: 44px;
-                font-size: 1.1rem;
-            }
-            
-            h1 {
-                font-size: 1.2rem;
+            .chat-container {
+                height: 350px;
             }
             
             .message {
-                padding: 14px;
                 max-width: 90%;
             }
             
-            .feature-grid {
-                grid-template-columns: 1fr;
+            h1 {
+                font-size: 1.5rem;
             }
         }
 
-        /* Dark mode enhancements */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --background: #0A0A18;
-                --surface: #151528;
+        @media (max-width: 480px) {
+            .input-wrapper {
+                flex-direction: column;
             }
-        }
-
-        /* Safe area for notch phones */
-        @supports(padding: max(0px)) {
-            .container, .input-section, .bottom-nav {
-                padding-left: max(16px, env(safe-area-inset-left));
-                padding-right: max(16px, env(safe-area-inset-right));
+            
+            button {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <header>
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-brain"></i>
-                </div>
-                <div class="header-text">
-                    <h1>HOLLO AI</h1>
-                    <div class="subtitle">
-                        <div class="status-dot"></div>
-                        By Nur Andika • Online
-                    </div>
-                </div>
+            <div class="logo">
+                <i class="fas fa-robot"></i>
             </div>
+            <h1>HOLLO AI</h1>
+            <p class="subtitle">AI Assistant</p>
+            <p class="creator">by Nur Andika</p>
         </header>
 
-        <!-- Main Chat Area -->
         <main class="main-content">
             <div class="chat-container" id="chat-container">
                 <div class="message ai-message">
-                    <div class="message-header">
-                        <i class="fas fa-robot"></i>
-                        HOLLO AI
-                    </div>
-                    Halo! 👋 Saya HOLLO AI, asisten cerdas dengan tema ungu yang keren! 
-                    <br><br>
-                    💜 <strong>Fitur khusus Android:</strong>
-                    <br>• Tampilan mobile optimized
-                    <br>• Gesture-friendly
-                    <br>• Dark mode otomatis
-                    <br>• Cepat dan ringan
+                    <div class="message-header">HOLLO AI</div>
+                    Halo! Saya HOLLO AI, asisten AI yang siap membantu Anda. Ada yang bisa saya bantu?
                 </div>
             </div>
 
-            <!-- Loading Indicator -->
             <div class="loading" id="loading">
-                <div class="typing-indicator">
-                    <i class="fas fa-robot"></i> HOLLO AI mengetik
-                    <div class="typing-dots">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
+                HOLLO AI mengetik
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
                 </div>
             </div>
 
-            <!-- Status Messages -->
-            <div class="status-message error" id="error"></div>
-            <div class="status-message success" id="success"></div>
+            <div class="status error" id="error"></div>
+            <div class="status success" id="success"></div>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <div class="quick-action" onclick="sendQuickMessage('Apa itu HOLLO AI?')">
-                    🤔 Tentang HOLLO AI
-                </div>
-                <div class="quick-action" onclick="sendQuickMessage('Buatkan code sederhana')">
-                    💻 Buatkan Code
-                </div>
-                <div class="quick-action" onclick="sendQuickMessage('Jelaskan fitur utama')">
-                    ⚡ Fitur Utama
-                </div>
-                <div class="quick-action" onclick="sendQuickMessage('Tips menggunakan AI')">
-                    💡 Tips AI
+            <div class="input-section">
+                <div class="input-wrapper">
+                    <input type="text" id="user-input" placeholder="Ketik pesan Anda..." autocomplete="off">
+                    <button id="send-btn">
+                        <i class="fas fa-paper-plane"></i> Kirim
+                    </button>
                 </div>
             </div>
         </main>
 
-        <!-- Input Section -->
-        <section class="input-section">
-            <div class="input-wrapper">
-                <input type="text" id="user-input" placeholder="Tanya apa saja ke HOLLO AI..." autocomplete="off">
-                <button class="send-btn" id="send-btn">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </section>
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="#" class="nav-item active">
-                <i class="fas fa-comment nav-icon"></i>
-                <span>Chat</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-star nav-icon"></i>
-                <span>Fitur</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-cog nav-icon"></i>
-                <span>Settings</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-user nav-icon"></i>
-                <span>Profile</span>
-            </a>
-        </nav>
+        <footer>
+            <p>HOLLO AI &copy; 2025 - Dibuat oleh Nur Andika</p>
+        </footer>
     </div>
 
     <script>
-        // Mobile-optimized JavaScript
+        // Konfigurasi API
+        const API_KEY = 'AIzaSyArAY7fOezk1nrptQ2-xBP8qH9bcJ_ESjk';
+        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        
+        // Elemen DOM
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const loading = document.getElementById('loading');
         const errorDiv = document.getElementById('error');
         const successDiv = document.getElementById('success');
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            userInput.focus();
-            showSuccess('HOLLO AI siap membantu! 👋');
-            
-            // Add some sample messages after delay
-            setTimeout(() => {
-                addMessage("Dibuat khusus untuk <strong>Android</strong> dengan design yang smooth dan responsive! 📱", false);
-            }, 2000);
-        });
-
-        // Add message function
+        
+        // Fungsi untuk menambahkan pesan ke chat
         function addMessage(message, isUser = false) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message');
@@ -636,52 +324,36 @@
             
             const messageHeader = document.createElement('div');
             messageHeader.classList.add('message-header');
-            
-            if (isUser) {
-                messageHeader.innerHTML = '<i class="fas fa-user"></i> Anda';
-            } else {
-                messageHeader.innerHTML = '<i class="fas fa-robot"></i> HOLLO AI';
-            }
+            messageHeader.textContent = isUser ? 'Anda' : 'HOLLO AI';
             
             const messageContent = document.createElement('div');
-            messageContent.innerHTML = message.replace(/\n/g, '<br>');
+            messageContent.textContent = message;
             
             messageDiv.appendChild(messageHeader);
             messageDiv.appendChild(messageContent);
             chatContainer.appendChild(messageDiv);
             
-            // Smooth scroll to bottom
-            chatContainer.scrollTo({
-                top: chatContainer.scrollHeight,
-                behavior: 'smooth'
-            });
+            // Scroll ke bawah
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
-
-        // Quick message function
-        function sendQuickMessage(message) {
-            userInput.value = message;
-            handleSendMessage();
-        }
-
-        // Loading indicator
+        
+        // Fungsi untuk menampilkan/menyembunyikan loading
         function toggleLoading(show) {
             loading.style.display = show ? 'block' : 'none';
-            chatContainer.scrollTo({
-                top: chatContainer.scrollHeight,
-                behavior: 'smooth'
-            });
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
-
-        // Status messages
+        
+        // Fungsi untuk menampilkan error
         function showError(message) {
             errorDiv.textContent = message;
             errorDiv.style.display = 'block';
             successDiv.style.display = 'none';
             setTimeout(() => {
                 errorDiv.style.display = 'none';
-            }, 4000);
+            }, 5000);
         }
-
+        
+        // Fungsi untuk menampilkan success
         function showSuccess(message) {
             successDiv.textContent = message;
             successDiv.style.display = 'block';
@@ -690,55 +362,91 @@
                 successDiv.style.display = 'none';
             }, 3000);
         }
-
-        // Simulate AI response (mobile-optimized)
-        function simulateAIResponse(userMessage) {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    const responses = [
-                        `Halo! Saya HOLLO AI dengan tema ungu yang keren! ✨<br><br>Dibuat oleh <strong>Nur Andika</strong> khusus untuk perangkat Android.`,
-                        `Saya HOLLO AI - asisten cerdas dengan design mobile-first! 📱<br><br>💜 <strong>Fitur Android:</strong><br>• Optimized for touch<br>• Smooth animations<br>• Dark theme`,
-                        `Ini HOLLO AI merespons! 🚀<br><br>Pertanyaan Anda: "${userMessage}"<br><br>Website ini dioptimalkan khusus untuk pengalaman mobile yang terbaik!`,
-                        `HOLLO AI di sini! 💫<br><br>Dengan design modern dan performa cepat untuk perangkat Android Anda.`
-                    ];
-                    resolve(responses[Math.floor(Math.random() * responses.length)]);
-                }, 1500 + Math.random() * 1000);
-            });
+        
+        // Fungsi untuk mengirim pesan ke API Gemini
+        async function sendMessageToGemini(message) {
+            try {
+                const requestBody = {
+                    contents: [
+                        {
+                            parts: [
+                                {
+                                    text: message
+                                }
+                            ]
+                        }
+                    ],
+                    generationConfig: {
+                        temperature: 0.7,
+                        topK: 40,
+                        topP: 0.95,
+                        maxOutputTokens: 1024,
+                    }
+                };
+                
+                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates.length > 0) {
+                    const text = data.candidates[0].content.parts[0].text;
+                    return text;
+                } else {
+                    throw new Error('Tidak ada respons dari AI');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                throw new Error('Terjadi kesalahan saat menghubungi AI');
+            }
         }
-
-        // Handle send message
+        
+        // Fungsi untuk menangani pengiriman pesan
         async function handleSendMessage() {
             const message = userInput.value.trim();
             
             if (!message) {
-                showError('Silakan ketik pesan terlebih dahulu');
+                showError('Silakan masukkan pesan terlebih dahulu');
                 return;
             }
-
-            // Add user message
+            
+            // Tambahkan pesan pengguna ke chat
             addMessage(message, true);
             userInput.value = '';
             sendBtn.disabled = true;
             
-            // Show loading
-            toggleLoading(true);
-
             try {
-                // Simulate AI response
-                const aiResponse = await simulateAIResponse(message);
-                addMessage(aiResponse, false);
-                showSuccess('HOLLO AI merespons! 💜');
+                toggleLoading(true);
+                
+                // Dapatkan respons dari AI
+                const aiResponse = await sendMessageToGemini(message);
+                
+                // Tambahkan respons AI ke chat
+                addMessage(aiResponse);
+                showSuccess('Pesan terkirim');
             } catch (error) {
-                showError('Terjadi kesalahan');
-                addMessage("Maaf, terjadi gangguan sementara. Silakan coba lagi.", false);
+                console.error('Error:', error);
+                showError(error.message);
+                
+                // Fallback response
+                addMessage("Maaf, saat ini saya mengalami gangguan teknis. Silakan coba lagi dalam beberapa saat.", false);
             } finally {
                 toggleLoading(false);
                 sendBtn.disabled = false;
                 userInput.focus();
             }
         }
-
-        // Event listeners with mobile optimizations
+        
+        // Event listeners
         sendBtn.addEventListener('click', handleSendMessage);
         
         userInput.addEventListener('keypress', (e) => {
@@ -746,54 +454,18 @@
                 handleSendMessage();
             }
         });
-
+        
         userInput.addEventListener('input', () => {
             sendBtn.disabled = !userInput.value.trim();
         });
-
-        // Touch optimizations
-        document.addEventListener('touchstart', function() {}, {passive: true});
-
-        // Prevent zoom on double tap
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function (event) {
-            const now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
-
-        // Swipe to clear input (optional feature)
-        let touchStartX = 0;
-        userInput.addEventListener('touchstart', (e) => {
-            touchStartX = e.touches[0].clientX;
+        
+        // Fokus ke input saat halaman dimuat
+        userInput.focus();
+        
+        // Inisialisasi
+        window.addEventListener('load', () => {
+            console.log('HOLLO AI loaded');
         });
-
-        userInput.addEventListener('touchend', (e) => {
-            const touchEndX = e.changedTouches[0].clientX;
-            const diff = touchStartX - touchEndX;
-            
-            // Swipe left to clear (if input has text)
-            if (diff > 50 && userInput.value.trim()) {
-                userInput.value = '';
-                sendBtn.disabled = true;
-            }
-        });
-
-        // Vibration feedback on send (if supported)
-        function vibrate() {
-            if (navigator.vibrate) {
-                navigator.vibrate(50);
-            }
-        }
-
-        // Enhanced send with vibration
-        const originalHandleSend = handleSendMessage;
-        handleSendMessage = function() {
-            vibrate();
-            originalHandleSend();
-        };
     </script>
 </body>
-      </html>
+</html>
