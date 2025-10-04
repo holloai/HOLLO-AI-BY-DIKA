@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Virtual Hand Music</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      position: fixed;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+    }
+    
+    .header {
+      padding: 10px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 10;
+      border-bottom: 1px solid #333;
+    }
+    
+    .header h2 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+    
+    .creator {
+      font-size: 14px;
+      color: #888;
+    }
+    
+    .camera-area {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #000;
+    }
+    
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+      background: #000;
+    }
+    
+    #output {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+    
+    .control-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .target-area {
+      width: 90%;
+      height: 70%;
+      border: 2px dashed rgba(255, 255, 255, 0.5);
+      border-radius: 15px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 8px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    
+    .key {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .key.active {
+      background: rgba(0, 255, 0, 0.6);
+      border-color: limegreen;
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+    }
+    
+    .finger-indicator {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255, 0, 0, 0.9);
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      pointer-events: none;
+      display: none;
+      border: 2px solid white;
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+    }
+    
+    .status {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      right: 15px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      text-align: center;
+      font-size: 14px;
+      z-index: 10;
+      border: 1px solid #333;
+    }
+    
+    .status.error {
+      background: rgba(255, 50, 50, 0.8);
+    }
+    
+    .status.success {
+      background: rgba(50, 255, 50, 0.3);
+    }
+    
+    .instructions {
+      position: absolute;
+      top: 70px;
+      left: 15px;
+      right: 15px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      text-align: center;
+      font-size: 14px;
+      z-index: 10;
+      border: 1px solid #333;
+    }
+    
+    .camera-fix {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .retry-btn {
+      padding: 12px 24px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    .retry-btn:hover {
+      background: #0056b3;
+    }
+
+    /* Landscape orientation */
+    @media (orientation: landscape) {
+      .target-area {
+        width: 70%;
+        height: 80%;
+      }
+      
+      .key {
+        font-size: 14px;
+      }
+      
+      .instructions {
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Cihuy </h2>
+      <div class="creator">Dibuat oleh Nur Andika</div>
+    </div>
+    
+    <div class="camera-area">
+      <!-- Fallback jika kamera tidak muncul -->
+      <div class="camera-fix" id="cameraFix">
+        <div style="text-align: center;">
+          <div style="font-size: 18px; margin-bottom: 10px; color: white;">Kamera tidak terdeteksi</div>
+          <div style="font-size: 14px; margin-bottom: 20px; color: #ccc;">Pastikan Anda memberikan izin akses kamera</div>
+          <button class="retry-btn" id="retryCamera">
+            Coba Lagi
+          </button>
+        </div>
+      </div>
+      
+      <video id="video" playsinline autoplay muted></video>
+      <canvas id="output"></canvas>
+      
+      <div class="control-overlay">
+        <div class="target-area">
+          <div class="key" id="do">Do</div>
+          <div class="key" id="re">Re</div>
+          <div class="key" id="mi">Mi</div>
+          <div class="key" id="fa">Fa</div>
+          <div class="key" id="sol">Sol</div>
+          <div class="key" id="la">La</div>
+          <div class="key" id="si">Si</div>
+          <div class="key" id="do2">Do</div>
+        </div>
+        
+        <div class="finger-indicator" id="fingerIndicator"></div>
+      </div>
+      
+      <div class="instructions">
+        Arahkan jari telunjuk ke tombol untuk memainkan nada
+      </div>
+      
+      <div class="status" id="status">
+        Menginisialisasi kamera...
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('output');
+    const ctx = canvas.getContext('2d');
+    const statusEl = document.getElementById('status');
+    const fingerIndicator = document.getElementById('fingerIndicator');
+    const cameraFix = document.getElementById('cameraFix');
+    const retryButton = document.getElementById('retryCamera');
+
+    // Notes configuration
+    const notes = ['do', 're', 'mi', 'fa', 'sol', 'la', 'si', 'do2'];
+    const frequencies = [262, 294, 330, 349, 392, 440, 494, 523];
+
+    // State
+    let lastNote = '';
+    let audioCtx = null;
+    let activeOscillator = null;
+    let cameraStarted = false;
+
+    // Initialize audio
+    function initAudio() {
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        updateStatus('Audio siap', '');
+      } catch (e) {
+        console.error('Audio error:', e);
+        updateStatus('Audio tidak tersedia', 'error');
+      }
+    }
+
+    // Play note function
+    function playNote(freq) {
+      if (!audioCtx) {
+        initAudio();
+        if (!audioCtx) return;
+      }
+      
+      // Stop previous oscillator
+      if (activeOscillator) {
+        try {
+          activeOscillator.stop();
+          activeOscillator.disconnect();
+        } catch (e) {
+          // Ignore stop errors
+        }
+      }
+      
+      // Create new oscillator
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      // Sound envelope
+      const now = audioCtx.currentTime;
+      gainNode.gain.setValueAtTime(0, now);
+      gainNode.gain.linearRampToValueAtTime(0.7, now + 0.05);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+      
+      oscillator.start();
+      oscillator.stop(now + 0.5);
+      
+      activeOscillator = oscillator;
+    }
+
+    // Update status
+    function updateStatus(message, type) {
+      statusEl.textContent = message;
+      statusEl.className = 'status ' + (type || '');
+    }
+
+    // Detect which key is being pointed at
+    function detectKeyFromFingerPosition(fingerX, fingerY) {
+      const keys = document.querySelectorAll('.key');
+      
+      for (let key of keys) {
+        const rect = key.getBoundingClientRect();
+        if (fingerX >= rect.left && fingerX <= rect.right &&
+            fingerY >= rect.top && fingerY <= rect.bottom) {
+          return key.id;
+        }
+      }
+      return null;
+    }
+
+    // Update finger indicator
+    function updateFingerIndicator(x, y) {
+      fingerIndicator.style.display = 'block';
+      fingerIndicator.style.left = x + 'px';
+      fingerIndicator.style.top = y + 'px';
+    }
+
+    // Hide finger indicator
+    function hideFingerIndicator() {
+      fingerIndicator.style.display = 'none';
+    }
+
+    // Draw hand landmarks - FIXED VERSION
+    function drawHandLandmarks(landmarks) {
+      if (!landmarks) return;
+      
+      // Save current canvas state
+      ctx.save();
+      
+      // Mirror the canvas context to match video
+      ctx.scale(-1, 1);
+      ctx.translate(-canvas.width, 0);
+      
+      // Hand connections - CORRECT ORDER
+      const connections = [
+        // Thumb
+        [0, 1], [1, 2], [2, 3], [3, 4],
+        // Index finger
+        [0, 5], [5, 6], [6, 7], [7, 8],
+        // Middle finger
+        [0, 9], [9, 10], [10, 11], [11, 12],
+        // Ring finger
+        [0, 13], [13, 14], [14, 15], [15, 16],
+        // Pinky
+        [0, 17], [17, 18], [18, 19], [19, 20],
+        // Palm
+        [5, 9], [9, 13], [13, 17], [0, 5]
+      ];
+      
+      // Draw bones with thicker lines
+      ctx.strokeStyle = '#00ff00';
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      
+      for (let [start, end] of connections) {
+        const startPoint = landmarks[start];
+        const endPoint = landmarks[end];
+        
+        // Only draw if both points are valid
+        if (startPoint && endPoint) {
+          ctx.beginPath();
+          ctx.moveTo(startPoint.x * canvas.width, startPoint.y * canvas.height);
+          ctx.lineTo(endPoint.x * canvas.width, endPoint.y * canvas.height);
+          ctx.stroke();
+        }
+      }
+      
+      // Draw joints with different colors
+      for (let i = 0; i < landmarks.length; i++) {
+        const landmark = landmarks[i];
+        
+        // Different colors for different parts
+        if (i === 8) {
+          ctx.fillStyle = '#ffff00'; // Index finger tip - yellow
+        } else if (i === 4 || i === 12 || i === 16 || i === 20) {
+          ctx.fillStyle = '#ff00ff'; // Finger tips - magenta
+        } else if (i === 0) {
+          ctx.fillStyle = '#0000ff'; // Wrist - blue
+        } else {
+          ctx.fillStyle = '#ff0000'; // Other joints - red
+        }
+        
+        ctx.beginPath();
+        ctx.arc(
+          landmark.x * canvas.width,
+          landmark.y * canvas.height,
+          5, 0, 2 * Math.PI
+        );
+        ctx.fill();
+        
+        // Add outline to joints
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      
+      // Restore canvas state
+      ctx.restore();
+    }
+
+    // Initialize MediaPipe Hands
+    const hands = new Hands({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+    });
+
+    hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.7,
+      minTrackingConfidence: 0.7
+    });
+
+    hands.onResults((results) => {
+      if (!cameraStarted) return;
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw camera feed first
+      if (results.image) {
+        ctx.save();
+        ctx.scale(-1, 1);
+        ctx.drawImage(results.image, -canvas.width, 0, canvas.width, canvas.height);
+        ctx.restore();
+      }
+      
+      // Process hand landmarks
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const landmarks = results.multiHandLandmarks[0];
+        
+        // Draw hand skeleton - THIS IS THE FIXED PART
+        drawHandLandmarks(landmarks);
+        
+        // Get index finger position - CORRECT MIRRORING
+        const indexFingerX = landmarks[8].x * canvas.width;
+        const indexFingerY = landmarks[8].y * canvas.height;
+        const mirroredX = canvas.width - indexFingerX;
+        
+        // Update finger indicator
+        updateFingerIndicator(mirroredX, indexFingerY);
+        
+        // Detect key
+        const detectedNote = detectKeyFromFingerPosition(mirroredX, indexFingerY);
+        
+        if (detectedNote) {
+          // Update UI
+          document.querySelectorAll('.key').forEach(k => k.classList.remove('active'));
+          document.getElementById(detectedNote).classList.add('active');
+          
+          // Play note if changed
+          const noteIndex = notes.indexOf(detectedNote);
+          if (noteIndex !== -1 && detectedNote !== lastNote) {
+            playNote(frequencies[noteIndex]);
+            lastNote = detectedNote;
+            updateStatus(`Memainkan: ${detectedNote.toUpperCase()}`, 'success');
+          }
+        } else {
+          if (lastNote) {
+            document.querySelectorAll('.key').forEach(k => k.classList.remove('active'));
+            lastNote = '';
+            updateStatus('Arahkan jari ke tombol', '');
+          }
+        }
+      } else {
+        hideFingerIndicator();
+        document.querySelectorAll('.key').forEach(k => k.classList.remove('active'));
+        lastNote = '';
+        updateStatus('Tunjukkan tangan ke kamera', '');
+      }
+    });
+
+    // Initialize camera
+    async function initCamera() {
+      try {
+        // Set canvas size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Get camera access
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: 'user',
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        });
+        
+        video.srcObject = stream;
+        
+        // Wait for video to load
+        await new Promise((resolve) => {
+          video.onloadedmetadata = () => {
+            video.play();
+            resolve();
+          };
+        });
+        
+        // Hide camera fix overlay
+        cameraFix.style.display = 'none';
+        cameraStarted = true;
+        updateStatus('Kamera aktif - Arahkan jari ke tombol', 'success');
+        
+        // Start processing frames
+        processFrame();
+        
+      } catch (error) {
+        console.error('Camera error:', error);
+        cameraFix.style.display = 'flex';
+        
+        let errorMessage = 'Tidak dapat mengakses kamera';
+        if (error.name === 'NotAllowedError') {
+          errorMessage = 'Izin kamera ditolak. Silakan berikan izin.';
+        } else if (error.name === 'NotFoundError') {
+          errorMessage = 'Kamera tidak ditemukan';
+        } else if (error.name === 'NotSupportedError') {
+          errorMessage = 'Browser tidak mendukung kamera';
+        }
+        
+        cameraFix.querySelector('div').innerHTML = `
+          <div style="font-size: 18px; margin-bottom: 10px; color: white;">${errorMessage}</div>
+          <div style="font-size: 14px; margin-bottom: 20px; color: #ccc;">Refresh halaman dan berikan izin kamera</div>
+          <button class="retry-btn" id="retryCamera">
+            Coba Lagi
+          </button>
+        `;
+        
+        // Re-attach event listener
+        document.getElementById('retryCamera').addEventListener('click', initCamera);
+      }
+    }
+
+    // Process video frames
+    async function processFrame() {
+      if (!cameraStarted) return;
+      
+      try {
+        await hands.send({ image: video });
+        requestAnimationFrame(processFrame);
+      } catch (error) {
+        console.error('Frame processing error:', error);
+        setTimeout(processFrame, 100);
+      }
+    }
+
+    // Event listeners
+    retryButton.addEventListener('click', initCamera);
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', () => {
+      initAudio();
+      initCamera();
+    });
+
+    // Handle resize
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Prevent unwanted touch behaviors
+    document.addEventListener('touchstart', (e) => {
+      if (e.target.tagName !== 'BUTTON') {
+        e.preventDefault();
+      }
+    }, { passive: false });
+    
+    document.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+    }, { passive: false });
+  </script>
+</body>
+</html>
